@@ -61,34 +61,34 @@ const UserProfile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="app-bg min-h-screen">
       <div className="container mx-auto px-4 py-6 max-w-4xl">
-        <div className="bg-white rounded-lg shadow p-6 mb-6">
+        <div className="card-dark p-6 mb-6">
           <div className="flex items-start gap-6">
             <img
               src={user.profile_pic || 'https://via.placeholder.com/100'}
               alt={user.username}
-              className="w-24 h-24 rounded-full"
+              className="avatar w-24 h-24"
             />
             <div className="flex-1">
-              <h1 className="text-2xl font-bold">{user.username}</h1>
-              <p className="text-gray-600">{user.email}</p>
-              <p className="mt-2 text-gray-700">{user.bio || 'No bio'}</p>
+              <h1 className="text-2xl font-bold text-white">{user.username}</h1>
+              <p className="text-[#8b949e]">{user.email}</p>
+              <p className="mt-2 text-white">{user.bio || 'No bio'}</p>
               
               {currentUser && currentUser.id !== user.id && (
                 <button
                   onClick={handleFollow}
                   className={`mt-3 px-6 py-2 rounded ${
                     isFollowing
-                      ? 'bg-gray-300 hover:bg-gray-400'
-                      : 'bg-blue-600 text-white hover:bg-blue-700'
+                      ? 'btn-secondary'
+                      : 'btn-primary'
                   }`}
                 >
                   {isFollowing ? 'Unfollow' : 'Follow'}
                 </button>
               )}
               
-              <div className="flex gap-6 mt-4">
+              <div className="flex gap-6 mt-4 text-white">
                 <div>
                   <span className="font-bold">{posts.length}</span> Posts
                 </div>
@@ -103,13 +103,15 @@ const UserProfile = () => {
           </div>
         </div>
 
-        <h2 className="text-xl font-bold mb-4">Posts</h2>
+        <h2 className="text-xl font-bold mb-4 text-white">Posts</h2>
         {posts.length === 0 ? (
-          <div className="bg-white rounded-lg shadow p-8 text-center text-gray-500">
+          <div className="card-dark p-8 text-center text-[#c9d1d9]">
             No posts yet.
           </div>
         ) : (
-          posts.map((post) => <PostCard key={post.id} post={post} onUpdate={loadUserProfile} />)
+          <div className="space-y-4">
+            {posts.map((post) => <PostCard key={post.id} post={post} onUpdate={loadUserProfile} />)}
+          </div>
         )}
       </div>
     </div>

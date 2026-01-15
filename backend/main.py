@@ -67,8 +67,10 @@ def register(user_data: UserCreate, db: Session = Depends(get_db)):
 # Login user
 @app.post("/login", response_model=Token)
 def login(credentials: UserLogin, db: Session = Depends(get_db)):
-    # Find user by email
-    user = db.query(User).filter(User.email == credentials.email).first()
+    # Find user by email or username
+    user = db.query(User).filter(
+        or_(User.email == credentials.email, User.username == credentials.email)
+    ).first()
     if not user or not verify_password(credentials.password, user.password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     

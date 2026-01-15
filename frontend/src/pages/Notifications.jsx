@@ -1,10 +1,17 @@
 // Notifications page - shows user notifications
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
 import { formatDate } from '../utils/date';
 import api from '../utils/api';
+import LoginRequired from './LoginRequired';
 
 const Notifications = () => {
+  const { user } = useContext(AuthContext);
   const [notifications, setNotifications] = useState([]);
+
+  if (!user) {
+    return <LoginRequired />;
+  }
 
   useEffect(() => {
     loadNotifications();

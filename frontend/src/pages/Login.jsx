@@ -34,11 +34,12 @@ const Login = () => {
         
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-[#c9d1d9] mb-2">Email</label>
+            <label className="block text-[#c9d1d9] mb-2">Email or Username</label>
             <input
-              type="email"
+              type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter email or username"
               className="w-full bg-[#0b1c2d] text-white border border-[#1f3b5c] rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1f6feb]"
               required
             />

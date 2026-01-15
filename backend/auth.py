@@ -25,6 +25,9 @@ def create_access_token(data: dict):
     to_encode = data.copy()
     expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
+    # Convert sub to string if it's an integer
+    if "sub" in to_encode and isinstance(to_encode["sub"], int):
+        to_encode["sub"] = str(to_encode["sub"])
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
@@ -39,9 +42,10 @@ def get_current_user(
     )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_id = payload.get("sub")
-        if user_id is None:
+        user_id_str = payload.get("sub")
+        if user_id_str is None:
             raise credentials_exception
+        user_id = int(user_id_str)  # Convert string back to int
     except JWTError as e:
         print(f"JWT decode error: {e}")
         raise credentials_exception

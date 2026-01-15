@@ -1,9 +1,10 @@
 // Messages page - Direct messaging
 import { useState, useEffect, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { formatDate } from '../utils/date';
 import api from '../utils/api';
+import LoginRequired from './LoginRequired';
 
 const Messages = () => {
   const { user } = useContext(AuthContext);
@@ -11,6 +12,10 @@ const Messages = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
+
+  if (!user) {
+    return <LoginRequired />;
+  }
 
   useEffect(() => {
     loadConversations();

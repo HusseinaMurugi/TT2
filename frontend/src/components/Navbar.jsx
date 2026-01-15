@@ -39,40 +39,34 @@ const Navbar = () => {
             🚀 TechTalk
           </Link>
           
-          {user ? (
-            <div className="flex items-center gap-6">
-              <Link to="/home" className="nav-link">Feed</Link>
-              <Link to="/explore" className="nav-link">Explore</Link>
-              <Link to="/search" className="nav-link">Search</Link>
-              <Link to="/messages" className="nav-link">Messages</Link>
-              <Link to="/notifications" className="nav-link relative">
-                Notifications
-                {unreadCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
-                    {unreadCount > 9 ? '9+' : unreadCount}
-                  </span>
-                )}
-              </Link>
-              <Link to="/profile" className="nav-link">Profile</Link>
-              <button 
-                onClick={handleLogout} 
-                className="btn-secondary"
-              >
-                Logout
-              </button>
-            </div>
-          ) : (
-            <div className="flex items-center gap-4">
-              <Link to="/explore" className="nav-link">Explore</Link>
-              <Link to="/login" className="nav-link">Login</Link>
-              <Link 
-                to="/register" 
-                className="btn-primary"
-              >
-                Sign Up
-              </Link>
-            </div>
-          )}
+          <div className="flex items-center gap-6">
+            <Link to="/home" className="nav-link">Feed</Link>
+            <Link to="/explore" className="nav-link">Explore</Link>
+            <Link to="/search" className="nav-link">Search</Link>
+            
+            {user ? (
+              <>
+                <Link to="/messages" className="nav-link">Messages</Link>
+                <Link to="/notifications" className="nav-link relative">
+                  Notifications
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                      {unreadCount > 9 ? '9+' : unreadCount}
+                    </span>
+                  )}
+                </Link>
+                <Link to="/profile" className="nav-link">Profile</Link>
+                <button onClick={handleLogout} className="btn-secondary">Logout</button>
+              </>
+            ) : (
+              <>
+                <Link to="/messages" className="nav-link">Messages</Link>
+                <Link to="/notifications" className="nav-link">Notifications</Link>
+                <Link to="/login" className="btn-secondary">Login</Link>
+                <Link to="/register" className="btn-primary">Sign Up</Link>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </nav>

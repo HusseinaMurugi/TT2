@@ -13,6 +13,15 @@ const Register = () => {
   const { register } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  const securityQuestions = [
+    "What was the name of your first pet?",
+    "What city were you born in?",
+    "What is your mother's maiden name?",
+    "What was the name of your elementary school?",
+    "What is your favorite book?",
+    "What was your childhood nickname?"
+  ];
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -68,14 +77,17 @@ const Register = () => {
           
           <div className="mb-4">
             <label className="block text-[#c9d1d9] mb-2">Security Question</label>
-            <input
-              type="text"
+            <select
               value={securityQuestion}
               onChange={(e) => setSecurityQuestion(e.target.value)}
-              placeholder="e.g., What's your first pet's name?"
-              className="w-full bg-[#0b1c2d] text-white border border-[#1f3b5c] rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1f6feb] placeholder:text-[#8b949e]"
+              className="w-full bg-[#0b1c2d] text-white border border-[#1f3b5c] rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1f6feb]"
               required
-            />
+            >
+              <option value="">Select a security question</option>
+              {securityQuestions.map((q, idx) => (
+                <option key={idx} value={q}>{q}</option>
+              ))}
+            </select>
           </div>
           
           <div className="mb-6">
