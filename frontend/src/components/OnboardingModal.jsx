@@ -5,6 +5,7 @@ import api from '../utils/api';
 const OnboardingModal = ({ user, onClose }) => {
   const [step, setStep] = useState(1);
   const [bio, setBio] = useState('');
+  const [profilePic, setProfilePic] = useState('');
   const [suggestedUsers, setSuggestedUsers] = useState([]);
   const [followedUsers, setFollowedUsers] = useState(new Set());
 
@@ -24,12 +25,16 @@ const OnboardingModal = ({ user, onClose }) => {
   };
 
   const handleUpdateProfile = async () => {
-    if (bio.trim()) {
-      try {
-        await api.put('/profile', { bio });
-      } catch (error) {
-        console.error('Error updating profile:', error);
+    try {
+      const updates = {};
+      if (bio.trim()) updates.bio = bio;
+      if (profilePic.trim()) updates.profile_pic = profilePic;
+      
+      if (Object.keys(updates).length > 0) {
+        await api.put('/profile', updates);
       }
+    } catch (error) {
+      console.error('Error updating profile:', error);
     }
     setStep(2);
   };
@@ -48,16 +53,30 @@ const OnboardingModal = ({ user, onClose }) => {
       <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8">
         {step === 1 ? (
           <>
-            <h2 className="text-2xl font-bold mb-2 text-gray-800">Welcome to TechTalk! 🎉</h2>
-            <p className="text-gray-600 mb-6">Let's set up your profile</p>
+            <h2 className="text-2xl font-bold mb-2 text-black">Welcome to TechTalk! 🎉</h2>
+            <p className="text-gray-700 mb-6">Let's set up your profile</p>
+            
+            <div className="mb-4">
+              <label className="block text-black mb-2 font-medium">Profile Photo URL</label>
+              <input
+                type="text"
+                value={profilePic}
+                onChange={(e) => setProfilePic(e.target.value)}
+                placeholder="https://example.com/photo.jpg"
+                className="w-full border-2 border-gray-300 rounded-xl px-4 py-3 focus:border-blue-500 focus:outline-none transition text-black"
+              />
+              {profilePic && (
+                <img src={profilePic} alt="Preview" className="mt-3 w-20 h-20 rounded-full object-cover border-2 border-blue-500" />
+              )}
+            </div>
             
             <div className="mb-6">
-              <label className="block text-gray-700 mb-2 font-medium">Tell us about yourself</label>
+              <label className="block text-black mb-2 font-medium">Tell us about yourself</label>
               <textarea
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
                 placeholder="I'm a developer passionate about..."
-                className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 resize-none focus:border-blue-500 focus:outline-none transition"
+                className="w-full border-2 border-gray-300 rounded-xl px-4 py-3 resize-none focus:border-blue-500 focus:outline-none transition text-black"
                 rows="4"
               />
             </div>
@@ -79,8 +98,8 @@ const OnboardingModal = ({ user, onClose }) => {
           </>
         ) : (
           <>
-            <h2 className="text-2xl font-bold mb-2 text-gray-800">Follow Some Users 👥</h2>
-            <p className="text-gray-600 mb-6">Discover interesting people to follow</p>
+            <h2 className="text-2xl font-bold mb-2 text-black">👥 Follow Some Users</h2>
+            <p className="text-gray-700 mb-6">Discover interesting people to follow</p>
             
             <div className="space-y-3 mb-6 max-h-80 overflow-y-auto">
               {suggestedUsers.map((suggestedUser) => (

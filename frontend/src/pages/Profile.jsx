@@ -7,8 +7,10 @@ import api from '../utils/api';
 const Profile = () => {
   const { user, updateUser } = useContext(AuthContext);
   const [posts, setPosts] = useState([]);
+  const [reposts, setReposts] = useState([]);
   const [followers, setFollowers] = useState([]);
   const [following, setFollowing] = useState([]);
+  const [activeTab, setActiveTab] = useState('posts');
   const [isEditing, setIsEditing] = useState(false);
   const [bio, setBio] = useState(user?.bio || '');
   const [profilePic, setProfilePic] = useState(user?.profile_pic || '');
@@ -27,6 +29,10 @@ const Profile = () => {
       setPosts(postsRes.data);
       setFollowers(followersRes.data);
       setFollowing(followingRes.data);
+      
+      // Load reposts - get posts user has reposted
+      // For now, we'll show empty array since backend doesn't have this endpoint yet
+      setReposts([]);
     } catch (error) {
       console.error('Error loading profile:', error);
     }
@@ -119,13 +125,49 @@ const Profile = () => {
         </div>
 
         {/* User's posts */}
-        <h2 className="text-xl font-bold mb-4">Your Posts</h2>
-        {posts.length === 0 ? (
-          <div className="bg-white rounded-lg shadow p-8 text-center text-gray-500">
-            You haven't posted anything yet.
-          </div>
+        <div className="mb-4 flex gap-4 border-b border-gray-300">
+          <button
+            onClick={() => setActiveTab('posts')}
+            className={`pb-3 px-4 font-semibold transition ${
+              activeTab === 'posts'
+                ? 'text-blue-600 border-b-2 border-blue-600'
+                : 'text-gray-600 hover:text-gray-800'
+            }`}
+          >
+            Posts ({posts.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('reposts')}
+            className={`pb-3 px-4 font-semibold transition ${
+              activeTab === 'reposts'
+                ? 'text-blue-600 border-b-2 border-blue-600'
+                : 'text-gray-600 hover:text-gray-800'
+            }`}
+          >
+            Reposts ({reposts.length})
+          </button>
+        </div>
+
+        {activeTab === 'posts' ? (
+          posts.length === 0 ? (
+            <div className="bg-white rounded-lg shadow p-8 text-center text-gray-500">
+              You haven't posted anything yet.
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {posts.map((post) => <PostCard key={post.id} post={post} onUpdate={loadProfile} />)}
+            </div>
+          )
         ) : (
-          posts.map((post) => <PostCard key={post.id} post={post} onUpdate={loadProfile} />)
+          reposts.length === 0 ? (
+            <div className="bg-white rounded-lg shadow p-8 text-center text-gray-500">
+              You haven't reposted anything yet.
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {reposts.map((post) => <PostCard key={post.id} post={post} onUpdate={loadProfile} />)}
+            </div>
+          )
         )}
       </div>
     </div>
