@@ -1,6 +1,7 @@
-// Home feed page - shows public posts or personalized feed
+// Home feed page - unified feed with trending sidebar
 import { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { TrendingUp, Users, Hash } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 import PostCard from '../components/PostCard';
 import OnboardingModal from '../components/OnboardingModal';
@@ -18,6 +19,7 @@ const Home = () => {
   const [trendingTags, setTrendingTags] = useState([]);
   const [trendingUsers, setTrendingUsers] = useState([]);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [activeTab, setActiveTab] = useState('feed');
 
   useEffect(() => {
     loadFeed();
@@ -185,55 +187,87 @@ const Home = () => {
               </div>
             )}
 
-            {/* Posts list */}
-            {posts.length === 0 ? (
-              <div className="card-dark p-12 text-center">
-                <div className="text-6xl mb-4">📢</div>
-                <p className="text-[#c9d1d9] text-lg">No posts yet. Be the first to share!</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {posts.map((post) => <PostCard key={post.id} post={post} onUpdate={loadFeed} />)}
-              </div>
-            )}
-          </div>
-
-          {/* Sidebar */}
-          <div className="lg:col-span-1 space-y-6">
-            {/* Trending Tags */}
-            {!user && trendingTags.length > 0 && (
-              <div className="card-dark p-6">
-                <h2 className="text-xl font-bold mb-4">🔥 Trending Tags</h2>
-                <div className="space-y-2">
-                  {trendingTags.map((tag, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-2 hover:bg-[#1f3b5c]/50 rounded-lg transition">
-                      <span className="text-[#1f6feb] font-semibold">#{tag.tag}</span>
-                      <span className="text-sm text-[#8b949e]">{tag.count} posts</span>
-                    </div>
-                  ))}
+            {/* Tabs */}
+            <div className="flex gap-4 mb-6 border-b border-[#1f3b5c] bg-white/10 rounded-t-lg">
+              <button
+                onClick={() => setActiveTab('feed')}
+                className={`pb-3 px-4 font-medium transition ${
+                  activeTab === 'feed'
+                    ? 'text-[#1f6feb] border-b-2 border-[#1f6feb]'
+                    : 'text-[#c9d1d9] hover:text-white'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5" />
+                  Posts
                 </div>
-              </div>
+              </button>
+              <button
+                onClick={() => setActiveTab('people')}
+                className={`pb-3 px-4 font-medium transition ${
+                  activeTab === 'people'
+                    ? 'text-[#1f6feb] border-b-2 border-[#1f6feb]'
+                    : 'text-[#c9d1d9] hover:text-white'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <Users className="w-5 h-5" />
+                  People
+                </div>
+              </button>
+              <button
+                onClick={() => setActiveTab('trending')}
+                className={`pb-3 px-4 font-medium transition ${
+                  activeTab === 'trending'
+                    ? 'text-[#1f6feb] border-b-2 border-[#1f6feb]'
+                    : 'text-[#c9d1d9] hover:text-white'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <Hash className="w-5 h-5" />
+                  Tags
+                </div>
+              </button>
+            </div>
+
+            {/* Posts Tab */}
+            {activeTab === 'feed' && (
+              posts.length === 0 ? (
+                <div className="card-dark p-12 text-center">
+                  <div className="text-6xl mb-4">📢</div>
+                  <p className="text-[#c9d1d9] text-lg">No posts yet. Be the first to share!</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {posts.map((post) => <PostCard key={post.id} post={post} onUpdate={loadFeed} />)}
+                </div>
+              )
             )}
 
-            {/* Trending Users */}
-            {!user && trendingUsers.length > 0 && (
-              <div className="card-dark p-6">
-                <h2 className="text-xl font-bold mb-4">⭐ Top Users</h2>
-                <div className="space-y-4">
+            {/* People Tab */}
+            {activeTab === 'people' && (
+              <div className="card-dark">
+                <div className="p-6 border-b border-[#1f3b5c]">
+                  <h2 className="text-xl font-semibold">Top Developers</h2>
+                </div>
+                <div className="divide-y divide-[#1f3b5c]">
                   {trendingUsers.map((trendingUser) => (
-                    <Link 
+                    <Link
                       key={trendingUser.id}
                       to={`/users/${trendingUser.id}`}
-                      className="flex items-center gap-3 p-3 rounded-xl hover:bg-[#1f3b5c]/50 transition"
+                      className="block p-6 hover:bg-[#1f3b5c]/50 transition"
                     >
-                      <img
-                        src={trendingUser.profile_pic || 'https://via.placeholder.com/40'}
-                        alt={trendingUser.username}
-                        className="avatar w-12 h-12"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold truncate">{trendingUser.username}</p>
-                        <p className="text-sm text-[#8b949e]">{trendingUser.followers_count} followers</p>
+                      <div className="flex items-center gap-4">
+                        <img
+                          src={trendingUser.profile_pic || 'https://via.placeholder.com/60'}
+                          alt={trendingUser.username}
+                          className="avatar w-16 h-16"
+                        />
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-lg">{trendingUser.username}</h3>
+                          <p className="text-[#8b949e] text-sm">{trendingUser.bio || 'Tech enthusiast'}</p>
+                          <p className="text-[#1f6feb] text-sm mt-1">{trendingUser.followers_count} followers</p>
+                        </div>
                       </div>
                     </Link>
                   ))}
@@ -241,12 +275,70 @@ const Home = () => {
               </div>
             )}
 
-            {/* Suggested Users */}
-            {user && suggestedUsers.length > 0 && (
+            {/* Trending Tags Tab */}
+            {activeTab === 'trending' && (
+              <div className="card-dark">
+                <div className="p-6 border-b border-[#1f3b5c]">
+                  <h2 className="text-xl font-semibold flex items-center gap-2">
+                    <Hash className="w-6 h-6 text-[#1f6feb]" />
+                    Trending Topics
+                  </h2>
+                </div>
+                <div className="divide-y divide-[#1f3b5c]">
+                  {trendingTags.map((item, index) => (
+                    <Link
+                      key={item.tag}
+                      to={`/topic/${item.tag}`}
+                      className="block p-6 hover:bg-[#1f3b5c]/50 transition"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-[#8b949e] text-sm">#{index + 1} Trending</span>
+                          </div>
+                          <h3 className="text-lg font-semibold">
+                            #{item.tag}
+                          </h3>
+                          <p className="text-[#8b949e] text-sm mt-1">
+                            {item.count.toLocaleString()} posts
+                          </p>
+                        </div>
+                        <TrendingUp className="w-5 h-5 text-[#1f6feb]" />
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Sidebar */}
+          <div className="lg:col-span-1 space-y-6">
+            {/* Trending Tags */}
+            {trendingTags.length > 0 && (
+              <div className="card-dark p-6">
+                <h2 className="text-xl font-bold mb-4">🔥 Trending Tags</h2>
+                <div className="space-y-2">
+                  {trendingTags.slice(0, 5).map((tag, idx) => (
+                    <Link
+                      key={idx}
+                      to={`/topic/${tag.tag}`}
+                      className="flex items-center justify-between p-2 hover:bg-gray-100 rounded-lg transition cursor-pointer"
+                    >
+                      <span className="text-blue-600 font-semibold">#{tag.tag}</span>
+                      <span className="text-sm text-gray-500">{tag.count} posts</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Suggested/Trending Users */}
+            {(user ? suggestedUsers : trendingUsers).length > 0 && (
               <div className="card-dark p-6 sticky top-24">
-                <h2 className="text-xl font-bold mb-4">👥 Who to Follow</h2>
+                <h2 className="text-xl font-bold mb-4">{user ? '👥 Who to Follow' : '⭐ Top Users'}</h2>
                 <div className="space-y-4">
-                  {suggestedUsers.map((suggestedUser) => (
+                  {(user ? suggestedUsers : trendingUsers).slice(0, 5).map((suggestedUser) => (
                     <Link 
                       key={suggestedUser.id}
                       to={`/users/${suggestedUser.id}`}

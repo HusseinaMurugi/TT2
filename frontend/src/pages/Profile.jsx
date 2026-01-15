@@ -21,18 +21,16 @@ const Profile = () => {
 
   const loadProfile = async () => {
     try {
-      const [postsRes, followersRes, followingRes] = await Promise.all([
+      const [postsRes, repostsRes, followersRes, followingRes] = await Promise.all([
         api.get(`/users/${user.id}/posts`),
+        api.get(`/users/${user.id}/reposts`),
         api.get(`/users/${user.id}/followers`),
         api.get(`/users/${user.id}/following`),
       ]);
       setPosts(postsRes.data);
+      setReposts(repostsRes.data);
       setFollowers(followersRes.data);
       setFollowing(followingRes.data);
-      
-      // Load reposts - get posts user has reposted
-      // For now, we'll show empty array since backend doesn't have this endpoint yet
-      setReposts([]);
     } catch (error) {
       console.error('Error loading profile:', error);
     }
@@ -50,48 +48,48 @@ const Profile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="app-bg min-h-screen">
       <div className="container mx-auto px-4 py-6 max-w-4xl">
         {/* Profile header */}
-        <div className="bg-white rounded-lg shadow p-6 mb-6">
+        <div className="card-dark p-6 mb-6">
           <div className="flex items-start gap-6">
             <img
               src={user?.profile_pic || 'https://via.placeholder.com/100'}
               alt={user?.username}
-              className="w-24 h-24 rounded-full"
+              className="avatar w-24 h-24"
             />
             <div className="flex-1">
-              <h1 className="text-2xl font-bold">{user?.username}</h1>
+              <h1 className="text-2xl font-bold text-black">{user?.username}</h1>
               <p className="text-gray-600">{user?.email}</p>
               
               {isEditing ? (
                 <form onSubmit={handleUpdateProfile} className="mt-4">
                   <div className="mb-3">
-                    <label className="block text-sm font-medium mb-1">Bio</label>
+                    <label className="block text-sm font-medium mb-1 text-black">Bio</label>
                     <textarea
                       value={bio}
                       onChange={(e) => setBio(e.target.value)}
-                      className="w-full border rounded px-3 py-2"
+                      className="w-full border-2 border-gray-300 rounded px-3 py-2 text-black"
                       rows="3"
                     />
                   </div>
                   <div className="mb-3">
-                    <label className="block text-sm font-medium mb-1">Profile Picture URL</label>
+                    <label className="block text-sm font-medium mb-1 text-black">Profile Picture URL</label>
                     <input
                       type="text"
                       value={profilePic}
                       onChange={(e) => setProfilePic(e.target.value)}
-                      className="w-full border rounded px-3 py-2"
+                      className="w-full border-2 border-gray-300 rounded px-3 py-2 text-black"
                     />
                   </div>
                   <div className="flex gap-2">
-                    <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                    <button type="submit" className="btn-primary">
                       Save
                     </button>
                     <button
                       type="button"
                       onClick={() => setIsEditing(false)}
-                      className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
+                      className="btn-secondary"
                     >
                       Cancel
                     </button>
@@ -99,17 +97,17 @@ const Profile = () => {
                 </form>
               ) : (
                 <>
-                  <p className="mt-2 text-gray-700">{user?.bio || 'No bio yet'}</p>
+                  <p className="mt-2 text-black">{user?.bio || 'No bio yet'}</p>
                   <button
                     onClick={() => setIsEditing(true)}
-                    className="mt-3 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                    className="mt-3 btn-primary"
                   >
                     Edit Profile
                   </button>
                 </>
               )}
               
-              <div className="flex gap-6 mt-4">
+              <div className="flex gap-6 mt-4 text-black">
                 <div>
                   <span className="font-bold">{posts.length}</span> Posts
                 </div>
@@ -125,23 +123,23 @@ const Profile = () => {
         </div>
 
         {/* User's posts */}
-        <div className="mb-4 flex gap-4 border-b border-gray-300">
+        <div className="mb-4 flex gap-4 border-b border-gray-300 bg-white rounded-t-lg">
           <button
             onClick={() => setActiveTab('posts')}
-            className={`pb-3 px-4 font-semibold transition ${
+            className={`pb-3 px-4 font-semibold transition text-black ${
               activeTab === 'posts'
-                ? 'text-blue-600 border-b-2 border-blue-600'
-                : 'text-gray-600 hover:text-gray-800'
+                ? 'border-b-2 border-blue-600'
+                : 'hover:text-gray-600'
             }`}
           >
             Posts ({posts.length})
           </button>
           <button
             onClick={() => setActiveTab('reposts')}
-            className={`pb-3 px-4 font-semibold transition ${
+            className={`pb-3 px-4 font-semibold transition text-black ${
               activeTab === 'reposts'
-                ? 'text-blue-600 border-b-2 border-blue-600'
-                : 'text-gray-600 hover:text-gray-800'
+                ? 'border-b-2 border-blue-600'
+                : 'hover:text-gray-600'
             }`}
           >
             Reposts ({reposts.length})
@@ -150,7 +148,7 @@ const Profile = () => {
 
         {activeTab === 'posts' ? (
           posts.length === 0 ? (
-            <div className="bg-white rounded-lg shadow p-8 text-center text-gray-500">
+            <div className="card-dark p-8 text-center text-gray-500">
               You haven't posted anything yet.
             </div>
           ) : (
@@ -160,7 +158,7 @@ const Profile = () => {
           )
         ) : (
           reposts.length === 0 ? (
-            <div className="bg-white rounded-lg shadow p-8 text-center text-gray-500">
+            <div className="card-dark p-8 text-center text-gray-500">
               You haven't reposted anything yet.
             </div>
           ) : (

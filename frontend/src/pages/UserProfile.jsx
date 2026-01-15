@@ -71,24 +71,32 @@ const UserProfile = () => {
               className="avatar w-24 h-24"
             />
             <div className="flex-1">
-              <h1 className="text-2xl font-bold text-white">{user.username}</h1>
-              <p className="text-[#8b949e]">{user.email}</p>
-              <p className="mt-2 text-white">{user.bio || 'No bio'}</p>
+              <h1 className="text-2xl font-bold text-black">{user.username}</h1>
+              <p className="text-gray-600">{user.email}</p>
+              <p className="mt-2 text-black">{user.bio || 'No bio'}</p>
               
               {currentUser && currentUser.id !== user.id && (
-                <button
-                  onClick={handleFollow}
-                  className={`mt-3 px-6 py-2 rounded ${
-                    isFollowing
-                      ? 'btn-secondary'
-                      : 'btn-primary'
-                  }`}
-                >
-                  {isFollowing ? 'Unfollow' : 'Follow'}
-                </button>
+                <div className="flex gap-3 mt-3">
+                  <button
+                    onClick={handleFollow}
+                    className={`px-6 py-2 rounded font-semibold ${
+                      isFollowing
+                        ? 'bg-gray-300 text-gray-700 hover:bg-gray-400'
+                        : 'btn-primary'
+                    }`}
+                  >
+                    {isFollowing ? 'Unfollow' : 'Follow'}
+                  </button>
+                  <button
+                    onClick={() => window.location.href = `/messages?user=${userId}`}
+                    className="btn-secondary"
+                  >
+                    Message
+                  </button>
+                </div>
               )}
               
-              <div className="flex gap-6 mt-4 text-white">
+              <div className="flex gap-6 mt-4 text-black">
                 <div>
                   <span className="font-bold">{posts.length}</span> Posts
                 </div>
@@ -103,9 +111,9 @@ const UserProfile = () => {
           </div>
         </div>
 
-        <h2 className="text-xl font-bold mb-4 text-white">Posts</h2>
+        <h2 className="text-xl font-bold mb-4 text-black">Posts</h2>
         {posts.length === 0 ? (
-          <div className="card-dark p-8 text-center text-[#c9d1d9]">
+          <div className="card-dark p-8 text-center text-gray-600">
             No posts yet.
           </div>
         ) : (

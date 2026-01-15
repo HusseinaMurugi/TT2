@@ -245,6 +245,28 @@ def get_user_posts(
     
     return result
 
+# Get user's reposts (public - no auth required)
+@app.get("/users/{user_id}/reposts", response_model=List[PostResponse])
+def get_user_reposts(
+    user_id: int,
+    db: Session = Depends(get_db)
+):
+    # Get post IDs that user has reposted
+    repost_ids = db.query(Repost.post_id).filter(Repost.user_id == user_id).all()
+    repost_ids = [r[0] for r in repost_ids]
+    
+    # Get the actual posts
+    posts = db.query(Post).filter(Post.id.in_(repost_ids)).order_by(Post.timestamp.desc()).all()
+    
+    result = []
+    for post in posts:
+        post.likes_count = db.query(func.count(Like.id)).filter(Like.post_id == post.id).scalar()
+        post.comments_count = db.query(func.count(Comment.id)).filter(Comment.post_id == post.id).scalar()
+        post.is_liked = False
+        result.append(post)
+    
+    return result
+
 # Update post
 @app.put("/posts/{post_id}", response_model=PostResponse)
 def update_post(
@@ -346,7 +368,7 @@ def create_comment(
     
     return new_comment
 
-# Get comments for a post
+# Get comments for a post (PUBLIC - no auth required)
 @app.get("/posts/{post_id}/comments", response_model=List[CommentResponse])
 def get_comments(post_id: int, db: Session = Depends(get_db)):
     comments = db.query(Comment).filter(Comment.post_id == post_id).order_by(Comment.timestamp.desc()).all()

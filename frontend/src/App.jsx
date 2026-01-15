@@ -15,6 +15,7 @@ import Search from './pages/Search';
 import Notifications from './pages/Notifications';
 import Messages from './pages/Messages';
 import SinglePost from './pages/SinglePost';
+import Topic from './pages/Topic';
 
 function AppContent() {
   const location = useLocation();
@@ -33,6 +34,7 @@ function AppContent() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/users/:userId" element={<UserProfile />} />
         <Route path="/posts/:postId" element={<SinglePost />} />
+        <Route path="/topic/:tag" element={<Topic />} />
         
         {/* Protected routes */}
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />

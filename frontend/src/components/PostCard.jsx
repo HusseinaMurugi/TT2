@@ -20,7 +20,14 @@ const PostCard = ({ post, onUpdate }) => {
     const parts = content.split(/(#\w+)/);
     return parts.map((part, idx) => 
       part.startsWith('#') ? (
-        <span key={idx} className="text-blue-600 font-semibold hover:underline cursor-pointer">{part}</span>
+        <Link 
+          key={idx} 
+          to={`/topic/${part.substring(1)}`}
+          className="text-blue-600 font-semibold hover:underline cursor-pointer"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {part}
+        </Link>
       ) : part
     );
   };
@@ -137,9 +144,14 @@ const PostCard = ({ post, onUpdate }) => {
       {post.tags && (
         <div className="mb-3 flex flex-wrap gap-2">
           {post.tags.split(',').map((tag, idx) => (
-            <span key={idx} className="bg-[#1f6feb]/20 text-[#1f6feb] px-3 py-1 rounded-full text-sm font-medium">
+            <Link
+              key={idx}
+              to={`/topic/${tag.trim()}`}
+              className="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm font-medium hover:bg-blue-200 transition"
+              onClick={(e) => e.stopPropagation()}
+            >
               {tag.trim()}
-            </span>
+            </Link>
           ))}
         </div>
       )}
@@ -181,13 +193,18 @@ const PostCard = ({ post, onUpdate }) => {
         <div className="mt-4 border-t border-gray-300 pt-4">
           {user ? (
             <form onSubmit={handleComment} className="mb-4">
-              <input
-                type="text"
-                value={commentText}
-                onChange={(e) => setCommentText(e.target.value)}
-                placeholder="Write a comment..."
-                className="input"
-              />
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                  placeholder="Write a comment..."
+                  className="input flex-1"
+                />
+                <button type="submit" className="btn-primary">
+                  Post
+                </button>
+              </div>
             </form>
           ) : (
             <div className="mb-4 text-center py-3 bg-gray-100 rounded-xl">
