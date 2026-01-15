@@ -10,6 +10,8 @@ const PostCard = ({ post, onUpdate }) => {
   const navigate = useNavigate();
   const [isLiked, setIsLiked] = useState(post.is_liked);
   const [likesCount, setLikesCount] = useState(post.likes_count);
+  const [isReposted, setIsReposted] = useState(post.is_reposted || false);
+  const [repostsCount, setRepostsCount] = useState(post.reposts_count || 0);
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
@@ -41,6 +43,27 @@ const PostCard = ({ post, onUpdate }) => {
       }
     } catch (error) {
       console.error('Error toggling like:', error);
+    }
+  };
+
+  const handleRepost = async () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    
+    try {
+      if (isReposted) {
+        await api.delete(`/posts/${post.id}/repost`);
+        setIsReposted(false);
+        setRepostsCount(repostsCount - 1);
+      } else {
+        await api.post(`/posts/${post.id}/repost`);
+        setIsReposted(true);
+        setRepostsCount(repostsCount + 1);
+      }
+    } catch (error) {
+      console.error('Error toggling repost:', error);
     }
   };
 
@@ -123,11 +146,11 @@ const PostCard = ({ post, onUpdate }) => {
       )}
 
       {/* Post actions */}
-      <div className="post-actions border-t border-[#1f3b5c] pt-4">
+      <div className="post-actions border-t border-gray-300 pt-4">
         <button 
           onClick={handleLike} 
           className={`flex items-center gap-2 hover:scale-110 transition ${
-            isLiked ? 'text-red-400' : 'hover:text-red-400'
+            isLiked ? 'text-red-500' : 'hover:text-red-500'
           }`}
         >
           <span className="text-xl">{isLiked ? '❤️' : '🤍'}</span>
@@ -135,16 +158,25 @@ const PostCard = ({ post, onUpdate }) => {
         </button>
         <button 
           onClick={loadComments} 
-          className="flex items-center gap-2 hover:scale-110 hover:text-[#1f6feb] transition"
+          className="flex items-center gap-2 hover:scale-110 hover:text-blue-500 transition"
         >
           <span className="text-xl">💬</span>
           <span className="font-semibold">{post.comments_count}</span>
+        </button>
+        <button 
+          onClick={handleRepost} 
+          className={`flex items-center gap-2 hover:scale-110 transition ${
+            isReposted ? 'text-green-500' : 'hover:text-green-500'
+          }`}
+        >
+          <span className="text-xl">🔁</span>
+          <span className="font-semibold">{repostsCount}</span>
         </button>
       </div>
 
       {/* Comments section */}
       {showComments && (
-        <div className="mt-4 border-t border-[#1f3b5c] pt-4">
+        <div className="mt-4 border-t border-gray-300 pt-4">
           {user ? (
             <form onSubmit={handleComment} className="mb-4">
               <input
@@ -156,9 +188,9 @@ const PostCard = ({ post, onUpdate }) => {
               />
             </form>
           ) : (
-            <div className="mb-4 text-center py-3 bg-[#1f3b5c]/50 rounded-xl">
-              <Link to="/login" className="text-[#1f6feb] hover:underline font-semibold">Login</Link>
-              <span className="text-[#c9d1d9]"> to comment</span>
+            <div className="mb-4 text-center py-3 bg-gray-100 rounded-xl">
+              <Link to="/login" className="text-blue-600 hover:underline font-semibold">Login</Link>
+              <span className="text-gray-700"> to comment</span>
             </div>
           )}
           <div className="space-y-3">
@@ -169,12 +201,12 @@ const PostCard = ({ post, onUpdate }) => {
                   alt={comment.author.username}
                   className="avatar w-10 h-10"
                 />
-                <div className="flex-1 bg-[#1f3b5c]/50 rounded-xl px-4 py-3">
-                  <Link to={`/users/${comment.author.id}`} className="font-semibold text-sm hover:text-[#1f6feb]">
+                <div className="flex-1 bg-gray-100 rounded-xl px-4 py-3">
+                  <Link to={`/users/${comment.author.id}`} className="font-semibold text-sm hover:text-blue-600 text-black">
                     {comment.author.username}
                   </Link>
-                  <p className="text-sm mt-1">{comment.content}</p>
-                  <p className="text-xs text-[#8b949e] mt-1">{formatDate(comment.timestamp)}</p>
+                  <p className="text-sm mt-1 text-black">{comment.content}</p>
+                  <p className="text-xs text-gray-500 mt-1">{formatDate(comment.timestamp)}</p>
                 </div>
               </div>
             ))}
