@@ -131,7 +131,9 @@ const PostCard = ({ post, onUpdate }) => {
       </div>
 
       {/* Post content */}
-      <p className="mb-4 text-lg whitespace-pre-wrap">{renderContentWithHashtags(post.content)}</p>
+      <Link to={`/posts/${post.id}`} className="block">
+        <p className="mb-4 text-lg whitespace-pre-wrap text-black hover:text-gray-700 transition">{renderContentWithHashtags(post.content)}</p>
+      </Link>
       {post.tags && (
         <div className="mb-3 flex flex-wrap gap-2">
           {post.tags.split(',').map((tag, idx) => (

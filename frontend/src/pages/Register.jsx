@@ -7,9 +7,11 @@ const Register = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [securityQuestion, setSecurityQuestion] = useState('');
   const [securityAnswer, setSecurityAnswer] = useState('');
   const [error, setError] = useState('');
+  const [passwordErrors, setPasswordErrors] = useState([]);
   const { register } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -22,9 +24,29 @@ const Register = () => {
     "What was your childhood nickname?"
   ];
 
+  const validatePassword = (pwd) => {
+    const errors = [];
+    if (pwd.length < 9) errors.push('At least 9 characters');
+    if (!/\d/.test(pwd)) errors.push('At least one number');
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(pwd)) errors.push('At least one special character (!@#$%^&*)');
+    setPasswordErrors(errors);
+    return errors.length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    
+    if (!validatePassword(password)) {
+      setError('Password does not meet requirements');
+      return;
+    }
+    
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+    
     try {
       await register(username, email, password, securityQuestion, securityAnswer);
       navigate('/home');
@@ -69,10 +91,38 @@ const Register = () => {
             <input
               type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => { setPassword(e.target.value); validatePassword(e.target.value); }}
               className="w-full bg-[#0b1c2d] text-white border border-[#1f3b5c] rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1f6feb]"
               required
             />
+            {password && passwordErrors.length > 0 && (
+              <div className="mt-2 text-sm text-red-400">
+                <p className="font-semibold">Password must have:</p>
+                <ul className="list-disc list-inside">
+                  {passwordErrors.map((err, idx) => <li key={idx}>{err}</li>)}
+                </ul>
+              </div>
+            )}
+            {password && passwordErrors.length === 0 && (
+              <p className="mt-2 text-sm text-green-400">✓ Password meets all requirements</p>
+            )}
+          </div>
+          
+          <div className="mb-4">
+            <label className="block text-[#c9d1d9] mb-2">Confirm Password</label>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="w-full bg-[#0b1c2d] text-white border border-[#1f3b5c] rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1f6feb]"
+              required
+            />
+            {confirmPassword && password !== confirmPassword && (
+              <p className="mt-2 text-sm text-red-400">Passwords do not match</p>
+            )}
+            {confirmPassword && password === confirmPassword && (
+              <p className="mt-2 text-sm text-green-400">✓ Passwords match</p>
+            )}
           </div>
           
           <div className="mb-4">
