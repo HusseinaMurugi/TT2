@@ -3,6 +3,7 @@ import { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { formatDate } from '../utils/date';
+import { getProfilePic } from '../utils/avatar';
 import api from '../utils/api';
 
 const PostCard = ({ post, onUpdate }) => {
@@ -121,12 +122,12 @@ const PostCard = ({ post, onUpdate }) => {
       <div className="flex items-center justify-between mb-4">
         <Link to={`/users/${post.author.id}`} className="flex items-center gap-3 hover:opacity-80 transition">
           <img
-            src={post.author.profile_pic || 'https://via.placeholder.com/40'}
+            src={getProfilePic(post.author.profile_pic, post.author.username)}
             alt={post.author.username}
             className="avatar w-12 h-12"
           />
           <div>
-            <p className="font-bold">{post.author.username}</p>
+            <p className="font-bold text-white">{post.author.username}</p>
             <p className="text-sm text-[#8b949e]">{formatDate(post.timestamp)}</p>
           </div>
         </Link>
@@ -139,7 +140,7 @@ const PostCard = ({ post, onUpdate }) => {
 
       {/* Post content */}
       <Link to={`/posts/${post.id}`} className="block">
-        <p className="mb-4 text-lg whitespace-pre-wrap text-black hover:text-gray-700 transition">{renderContentWithHashtags(post.content)}</p>
+        <p className="mb-4 text-lg whitespace-pre-wrap text-white hover:text-gray-300 transition">{renderContentWithHashtags(post.content)}</p>
       </Link>
       {post.tags && (
         <div className="mb-3 flex flex-wrap gap-2">
@@ -216,16 +217,16 @@ const PostCard = ({ post, onUpdate }) => {
             {comments.map((comment) => (
               <div key={comment.id} className="flex gap-3">
                 <img
-                  src={comment.author.profile_pic || 'https://via.placeholder.com/32'}
+                  src={getProfilePic(comment.author.profile_pic, comment.author.username)}
                   alt={comment.author.username}
                   className="avatar w-10 h-10"
                 />
-                <div className="flex-1 bg-gray-100 rounded-xl px-4 py-3">
-                  <Link to={`/users/${comment.author.id}`} className="font-semibold text-sm hover:text-blue-600 text-black">
+                <div className="flex-1 bg-[#0b1c2d] rounded-xl px-4 py-3 border border-[#1f3b5c]">
+                  <Link to={`/users/${comment.author.id}`} className="font-semibold text-sm hover:text-blue-400 text-white">
                     {comment.author.username}
                   </Link>
-                  <p className="text-sm mt-1 text-black">{comment.content}</p>
-                  <p className="text-xs text-gray-500 mt-1">{formatDate(comment.timestamp)}</p>
+                  <p className="text-sm mt-1 text-white">{comment.content}</p>
+                  <p className="text-xs text-[#8b949e] mt-1">{formatDate(comment.timestamp)}</p>
                 </div>
               </div>
             ))}

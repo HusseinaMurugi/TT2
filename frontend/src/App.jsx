@@ -19,16 +19,17 @@ import Topic from './pages/Topic';
 
 function AppContent() {
   const location = useLocation();
-  const hideNavbar = location.pathname === '/';
+  const hideNavbar = location.pathname === '/' || location.pathname === '/home';
 
   return (
     <>
       {!hideNavbar && <Navbar />}
       <Routes>
         {/* Public routes */}
-        <Route path="/" element={<LandingPage />} />
+        <Route path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
         <Route path="/explore" element={<Explore />} />
+        <Route path="/search" element={<Search />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -38,7 +39,6 @@ function AppContent() {
         
         {/* Protected routes */}
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-        <Route path="/search" element={<ProtectedRoute><Search /></ProtectedRoute>} />
         <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
         <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
         
