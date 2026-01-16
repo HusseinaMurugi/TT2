@@ -1,6 +1,6 @@
 // Messages page - Direct messaging
 import { useState, useEffect, useContext } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import { Link, Navigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { formatDate } from '../utils/date';
 import api from '../utils/api';
@@ -8,6 +8,7 @@ import LoginRequired from './LoginRequired';
 
 const Messages = () => {
   const { user } = useContext(AuthContext);
+  const location = useLocation();
   const [conversations, setConversations] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -19,7 +20,22 @@ const Messages = () => {
 
   useEffect(() => {
     loadConversations();
-  }, []);
+    
+    // Check if a user was passed via navigation state
+    if (location.state?.selectedUserId) {
+      loadUserAndMessages(location.state.selectedUserId);
+    }
+  }, [location.state]);
+
+  const loadUserAndMessages = async (userId) => {
+    try {
+      const userRes = await api.get(`/users/${userId}`);
+      setSelectedUser(userRes.data);
+      loadMessages(userId);
+    } catch (error) {
+      console.error('Error loading user:', error);
+    }
+  };
 
   const loadConversations = async () => {
     try {
