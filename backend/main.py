@@ -21,7 +21,7 @@ app = FastAPI(title="TechTalk API")
 # CORS middleware - allows frontend to communicate with backend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:5173"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -759,3 +759,6 @@ def get_unread_count(current_user: User = Depends(get_current_user), db: Session
         Notification.read == False
     ).scalar()
     return {"unread_count": count}
+
+# Vercel handler
+handler = app

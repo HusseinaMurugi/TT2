@@ -1,7 +1,7 @@
 // API utility for making requests to backend
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8000';
+const API_URL = process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:8000';
 
 // Create axios instance with base configuration
 const api = axios.create({
